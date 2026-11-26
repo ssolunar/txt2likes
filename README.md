@@ -1,21 +1,21 @@
 # txt2likes
 
-텍스트 파일의 곡 목록을 Spotify "좋아요 표시한 곡"에 일괄 추가하는 스크립트.
-FLO 등 내보내기 기능이 없는 서비스에서 Spotify로 옮길 때 쓴다.
+Bulk-import a text file of songs into your Spotify Liked Songs.
+Useful when moving from a service with no export or transfer support (e.g. FLO).
 
-2026년 2월 Spotify Web API 변경(`PUT /me/library`, 요청당 40곡)에 대응한다.
+Works with the February 2026 Spotify Web API changes (`PUT /me/library`, 40 tracks per request).
 
-## 준비
+## Requirements
 
-- Spotify **Premium** 계정 (개발자 앱 동작 조건)
-- [Spotify 개발자 대시보드](https://developer.spotify.com/dashboard)에서 앱 생성
+- A Spotify **Premium** account (required for Development Mode apps)
+- An app created in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
   - Redirect URI: `http://127.0.0.1:8888/callback`
   - API: Web API
 - `pip install "spotipy>=2.26.0"`
 
-## 입력 형식
+## Input format
 
-한 줄에 한 곡, `제목 - 아티스트`. 아티스트가 여럿이면 `,`로 구분한다.
+One song per line, `Title - Artist`. Separate multiple artists with `,`.
 
 ```
 thank u, next - Ariana Grande
@@ -23,26 +23,26 @@ thank u, next - Ariana Grande
 CU - 노윤하, CHERRY BOY 17
 ```
 
-기본 경로는 `~/Downloads/spotify.txt`이고 `--src`로 바꿀 수 있다.
+The default path is `~/Downloads/spotify.txt`. Use `--src` to change it.
 
-## 사용법
+## Usage
 
 ```powershell
 $env:SPOTIPY_CLIENT_ID = "..."
 $env:SPOTIPY_CLIENT_SECRET = "..."
 $env:SPOTIPY_REDIRECT_URI = "http://127.0.0.1:8888/callback"
 
-python txt2likes.py search            # 검색만. matched.csv 생성, 계정 변경 없음
-python txt2likes.py save --limit 5    # 5곡만 시험 저장
-python txt2likes.py save              # 전체 저장
+python txt2likes.py search            # search only: writes matched.csv, changes nothing in your account
+python txt2likes.py save --limit 5    # trial run: save the first 5 tracks
+python txt2likes.py save              # save everything
 ```
 
-`search`와 `save` 사이에 `matched.csv`를 열어 `의심` 칸에 `?`가 붙은 줄을 확인하고, 틀린 줄은 지운다.
+Between `search` and `save`, open `matched.csv`, check the rows flagged `?` in the last column, and delete the wrong ones.
 
-## 알아둘 점
+## Notes
 
-- 검색 첫 결과를 그대로 쓴다. 동명이곡, 리믹스, 노래방 반주 버전이 잡힐 수 있어 확인이 필요하다.
-- `?` 표시는 제목 유사도만 본다. 한글 제목이 영문으로 등록된 곡에도 붙으므로 대부분은 오탐이다.
-- 요청 간격은 2초다. 지연 없이 돌리면 앱에 24시간 요청 제한이 걸린다.
-- `search`는 중단돼도 다시 실행하면 이어서 한다.
-- `.cache`(로그인 토큰)와 `matched.csv`는 저장소에 올리지 않는다.
+- The first search result is used as-is, so same-title songs, remixes, and karaoke versions can slip in. Review before saving.
+- The `?` flag only compares titles. It also fires when a Korean title is listed in English on Spotify, so most flags are false positives.
+- Requests are spaced 2 seconds apart. Running without a delay got the app rate-limited for 24 hours.
+- `search` is resumable: run it again and it skips songs already in `matched.csv`.
+- `.cache` (login token) and `matched.csv` are git-ignored.
