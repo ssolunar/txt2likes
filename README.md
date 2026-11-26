@@ -37,7 +37,7 @@ python txt2likes.py save --limit 5    # trial run: save the first 5 tracks
 python txt2likes.py save              # save everything
 ```
 
-Between `search` and `save`, open `matched.csv`, check the rows flagged `?` in the last column, and delete the wrong ones.
+Between `search` and `save`, open `matched.csv`, check the rows flagged `?` in the `suspect` column, and delete the wrong ones.
 
 ## Notes
 

@@ -1,6 +1,6 @@
-# Spotify 로그인 토큰
+# Spotify login token
 .cache
-# 개인 좋아요 목록(실행 결과)
+# personal liked-songs data (run output)
 matched*.csv
 not_found.txt
 __pycache__/
